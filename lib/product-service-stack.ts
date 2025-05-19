@@ -12,7 +12,7 @@ export class ProductServiceStack extends cdk.Stack {
             this,
             "getProductsListFunction",
             {
-                runtime: lambda.Runtime.NODEJS_22_X,
+                runtime: lambda.Runtime.NODEJS_18_X,
                 code: lambda.Code.fromAsset("lambda"), // Points to lambda directory
                 handler: "getProductsList.handler", // file and function name
             }
