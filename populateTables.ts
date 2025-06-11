@@ -1,8 +1,10 @@
-import { config, DynamoDB } from "aws-sdk"; // Import AWS SDK
-import * as dotenv from "dotenv"; // Import dotenv to handle environment variables
-import { v4 as uuidv4 } from "uuid"; // Import the UUID library for unique product IDs
+import { config } from "aws-sdk";
+import { DynamoDBDocument } from "@aws-sdk/lib-dynamodb";
+import { DynamoDB } from "@aws-sdk/client-dynamodb";
+import * as dotenv from "dotenv";
+import { v4 as uuidv4 } from "uuid";
 
-dotenv.config(); // Load environment variables from .env file
+dotenv.config();
 
 // DynamoDB configuration
 config.update({
@@ -11,7 +13,7 @@ config.update({
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 });
 
-const ddb = new DynamoDB.DocumentClient(); // Use DocumentClient for easy JSON handling
+const ddb = DynamoDBDocument.from(new DynamoDB());
 
 const productsTable = "products";
 const stockTable = "stock";
@@ -28,16 +30,14 @@ const testProducts = [
     { title: "Monitor", description: "4K UHD Monitor", price: 300 },
 ];
 
-const stockCounts = [50, 120, 30, 75]; // Test stock counts corresponding to products above
+const stockCounts = [50, 120, 30, 75];
 
-// Populate the DynamoDB tables with test data
 const populateTables = async () => {
     console.log("Starting data insertion...");
 
-    // Insert products
     const productIDs: string[] = [];
     for (const product of testProducts) {
-        const id = uuidv4(); // Generate a unique ID for the product
+        const id = uuidv4();
         const productItem = {
             id,
             title: product.title,
@@ -47,16 +47,14 @@ const populateTables = async () => {
 
         try {
             await ddb
-                .put({ TableName: productsTable, Item: productItem })
-                .promise();
+                .put({ TableName: productsTable, Item: productItem });
             console.log(`Inserted product: ${product.title} (ID: ${id})`);
-            productIDs.push(id); // Store the ID for stock insertion later
+            productIDs.push(id);
         } catch (err) {
             console.error(`Error inserting product "${product.title}":`, err);
         }
     }
 
-    // Insert stock counts
     for (let i = 0; i < productIDs.length; i++) {
         const stockItem = {
             product_id: productIDs[i],
@@ -64,7 +62,7 @@ const populateTables = async () => {
         };
 
         try {
-            await ddb.put({ TableName: stockTable, Item: stockItem }).promise();
+            await ddb.put({ TableName: stockTable, Item: stockItem });
             console.log(
                 `Inserted stock for product ID: ${productIDs[i]} (Count: ${stockCounts[i]})`
             );
@@ -79,7 +77,6 @@ const populateTables = async () => {
     console.log("Data insertion completed.");
 };
 
-// Execute the script if it's run directly
 if (require.main === module) {
     populateTables()
         .then(() => console.log("Script finished successfully."))
