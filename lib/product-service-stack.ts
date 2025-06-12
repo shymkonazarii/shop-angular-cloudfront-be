@@ -34,16 +34,18 @@ export class ProductServiceStack extends cdk.Stack {
 
         const productsTable = new dynamodb.Table(this, "ProductsTable", {
             partitionKey: { name: "id", type: dynamodb.AttributeType.STRING },
-            tableName: "products", // Name of the table
+            tableName: "products",
         });
 
         const createProductLambda = new lambda.Function(
             this,
             "CreateProductLambda",
             {
-                runtime: lambda.Runtime.NODEJS_14_X,
+                runtime: lambda.Runtime.NODEJS_18_X,
                 handler: "createProduct.handler",
-                code: lambda.Code.fromAsset(path.join(__dirname, "lambda")),
+                code: lambda.Code.fromAsset(
+                    path.join(__dirname, "../dist/lambda")
+                ),
                 environment: {
                     PRODUCTS_TABLE_NAME: productsTable.tableName,
                 },
