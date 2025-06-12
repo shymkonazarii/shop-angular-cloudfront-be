@@ -34,7 +34,27 @@ export class ProductServiceStack extends cdk.Stack {
 
         const productsTable = new dynamodb.Table(this, "ProductsTable", {
             partitionKey: { name: "id", type: dynamodb.AttributeType.STRING },
-            tableName: "products",
+            tableName: "products", // Name of the table
+        });
+
+        const createProductLambda = new lambda.Function(
+            this,
+            "CreateProductLambda",
+            {
+                runtime: lambda.Runtime.NODEJS_14_X,
+                handler: "createProduct.handler",
+                code: lambda.Code.fromAsset(path.join(__dirname, "lambda")),
+                environment: {
+                    PRODUCTS_TABLE_NAME: productsTable.tableName,
+                },
+            }
+        );
+
+        // Grant the Lambda function permissions to interact with DynamoDB
+        productsTable.grantWriteData(createProductLambda);
+
+        new cdk.CfnOutput(this, "ApiGatewayUrl", {
+            value: api.url,
         });
 
         const stockTable = new dynamodb.Table(this, "StockTable", {
