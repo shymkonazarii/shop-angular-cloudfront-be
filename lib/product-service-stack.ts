@@ -3,23 +3,22 @@ import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as apigateway from "aws-cdk-lib/aws-apigateway";
 import { Construct } from "constructs";
+import * as path from "path";
 
 export class ProductServiceStack extends cdk.Stack {
-    constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
+    constructor(scope: Construct, id: string, props?: cdk.StackProps) {
         super(scope, id, props);
 
-        // Create the Lambda Function
         const getProductsListLambda = new lambda.Function(
             this,
             "getProductsListFunction",
             {
                 runtime: lambda.Runtime.NODEJS_18_X,
-                code: lambda.Code.fromAsset("lambda"), // Points to lambda directory
-                handler: "getProductsList.handler", // file and function name
+                code: lambda.Code.fromAsset(path.join(__dirname, "lambda")),
+                handler: "getProductsList.handler",
             }
         );
 
-        // Create the API Gateway and integrate with Lambda
         const api = new apigateway.RestApi(this, "ProductServiceAPI", {
             restApiName: "Product Service",
             description: "API for product service.",
@@ -36,7 +35,6 @@ export class ProductServiceStack extends cdk.Stack {
             tableName: "products",
         });
 
-        // Create Stock Table
         const stockTable = new dynamodb.Table(this, "StockTable", {
             partitionKey: {
                 name: "product_id",
@@ -45,7 +43,6 @@ export class ProductServiceStack extends cdk.Stack {
             tableName: "stock",
         });
 
-        // Environment variables for Lambda integration
         const lambdaEnvVariables = {
             PRODUCTS_TABLE_NAME: productsTable.tableName,
             STOCK_TABLE_NAME: stockTable.tableName,

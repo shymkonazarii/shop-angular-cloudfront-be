@@ -2,7 +2,7 @@
   "name": "shop-angular-cloudfront-be",
   "version": "0.1.0",
   "bin": {
-    "shop-angular-cloudfront-be": "bin/shop-angular-cloudfront-be.ts"
+    "shop-angular-cloudfront-be": "lib/shop-angular-cloudfront-be.ts"
   },
   "scripts": {
     "build": "tsc",
