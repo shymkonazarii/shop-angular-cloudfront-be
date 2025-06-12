@@ -14,7 +14,9 @@ export class ProductServiceStack extends cdk.Stack {
             "getProductsListFunction",
             {
                 runtime: lambda.Runtime.NODEJS_18_X,
-                code: lambda.Code.fromAsset(path.join(__dirname, "lambda")),
+                code: lambda.Code.fromAsset(
+                    path.join(__dirname, "../dist/lambda")
+                ),
                 handler: "getProductsList.handler",
             }
         );
