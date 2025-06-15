@@ -1,5 +1,5 @@
 {
-  "app": "npx ts-node --prefer-ts-exts bin/shop-angular-cloudfront-be.ts",
+  "app": "npx ts-node --prefer-ts-exts lib/shop-angular-cloudfront-be.ts",
   "watch": {
     "include": [
       "**"
