@@ -22,9 +22,11 @@
     "@aws-cdk/aws-lambda": "^1.203.0",
     "@aws-sdk/client-dynamodb": "^3.799.0",
     "@aws-sdk/lib-dynamodb": "^3.799.0",
+    "@serverless/typescript": "^4.15.1",
     "aws-cdk-lib": "2.195.0",
     "aws-sdk": "^2.1692.0",
     "constructs": "^10.0.0",
+    "csv-parser": "^3.2.0",
     "dotenv": "^16.5.0",
     "uuid": "^11.1.0"
   }

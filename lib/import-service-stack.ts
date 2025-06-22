@@ -3,6 +3,7 @@ import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as apiGateway from "aws-cdk-lib/aws-apigateway";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as s3 from "aws-cdk-lib/aws-s3";
+import * as path from "path";
 import { Construct } from "constructs";
 
 export class ImportServiceStack extends cdk.Stack {
@@ -22,7 +23,9 @@ export class ImportServiceStack extends cdk.Stack {
             {
                 runtime: lambda.Runtime.NODEJS_18_X,
                 handler: "handler.main",
-                code: lambda.Code.fromAsset("path/to/lambda-code-directory"), // Provide the directory with your Lambda code
+                code: lambda.Code.fromAsset(
+                    path.join(__dirname, "../dist/lambda")
+                ),
                 environment: {
                     BUCKET_NAME: importBucket.bucketName,
                 },
@@ -43,7 +46,7 @@ export class ImportServiceStack extends cdk.Stack {
             new apiGateway.LambdaIntegration(importProductsFile),
             {
                 requestParameters: {
-                    "method.request.querystring.name": true, // Validate "name" parameter in request
+                    "method.request.querystring.name": true,
                 },
             }
         );
