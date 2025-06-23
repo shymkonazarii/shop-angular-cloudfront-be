@@ -1,0 +1,41 @@
+service: authorization-service
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  environment:
+    YOUR_GITHUB_USERNAME: ${env:GITHUB_USERNAME}
+
+functions:
+  basicAuthorizer:
+    handler: dist/handler.basicAuthorizer
+    events:
+      - http:
+          path: authorizer
+          method: get
+
+service: import-service
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  environment:
+    BUCKET_NAME: "${env:BUCKET_NAME}"
+
+functions:
+  importProductsFile:
+    handler: dist/handler.importProductsFile
+    events:
+      - http:
+          path: import
+          method: get
+          cors: true
+          authorizer:
+            name: basicAuthorizer
+            type: token
+            arn: arn:aws:lambda:${self:provider.region}:${env:AWS_ACCOUNT_ID}:function:authorization-service-dev-basicAuthorizer
+
+plugins:
+  - serverless-dotenv-plugin
